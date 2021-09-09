@@ -21,19 +21,12 @@ def _play_with_pyaudio(seg, device_index):
     print("Using pyaudio")
     import pyaudio
     p = pyaudio.PyAudio()
-    '''
-    
-    for i in range(0, p.get_device_count()):
-        print(p.get_device_info_by_index(i)['name'])
-    '''
 
-    if device_index != None:
-        stream = p.open(format=p.get_format_from_width(seg.sample_width),
-                        channels=seg.channels,
-                        rate=int(p.get_device_info_by_index(device_index)['defaultSampleRate']),
-                        output_device_index = device_index,
-                        output=True)
-
+    stream = p.open(format=p.get_format_from_width(seg.sample_width),
+                    channels=seg.channels,
+                    rate=int(p.get_device_info_by_index(device_index)['defaultSampleRate']),
+                    output_device_index = device_index,
+                    output=True)
 
     # Just in case there were any exceptions/interrupts, we release the resource
     # So as not to raise OSError: Device Unavailable should play() be used again
