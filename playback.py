@@ -10,21 +10,19 @@ from tempfile import NamedTemporaryFile
 from .utils import get_player_name, make_chunks
 
 def _play_with_ffplay(seg):
-    print("Using ffplay")
     PLAYER = get_player_name()
     with NamedTemporaryFile("w+b", suffix=".wav") as f:
         seg.export(f.name, "wav")
         subprocess.call([PLAYER, "-nodisp", "-autoexit", "-hide_banner", f.name])
 
 
-def _play_with_pyaudio(seg, device_index): 
-    print("Using pyaudio")
+def _play_with_pyaudio(seg, device_index = None):
     import pyaudio
     p = pyaudio.PyAudio()
 
     stream = p.open(format=p.get_format_from_width(seg.sample_width),
                     channels=seg.channels,
-                    rate=int(p.get_device_info_by_index(device_index)['defaultSampleRate']),
+                    rate=seg.frame_rate,
                     output_device_index = device_index,
                     output=True)
 
@@ -42,7 +40,6 @@ def _play_with_pyaudio(seg, device_index):
 
 
 def _play_with_simpleaudio(seg):
-    print("Using simpleaudio")
     import simpleaudio
     return simpleaudio.play_buffer(
         seg.raw_data,
